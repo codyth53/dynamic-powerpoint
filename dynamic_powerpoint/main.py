@@ -1,4 +1,7 @@
 import argparse
+from .settings_parser import DpConfig
+from.calendar_utils import Calendar
+
 
 def run():
     parser = argparse.ArgumentParser(description="Generate a PowerPoint based on Google Calendar events.")
@@ -6,4 +9,6 @@ def run():
 
     args = parser.parse_args()
 
-    print(args.config_path)
+    config = DpConfig(args.config_path)
+
+    calendar = Calendar(config)
