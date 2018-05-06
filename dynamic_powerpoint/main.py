@@ -1,7 +1,8 @@
 import argparse
 from .settings_parser import DpConfig
 from .calendar_utils import Calendar
-from dynamic_powerpoint.powerpoint_generator.powerpoint_generator import PowerpointGenerator, generate_powerpoint
+from .powerpoint_generator.powerpoint_generator import PowerpointGenerator
+from .powerpoint_generator.main_generator import generate_powerpoint
 
 
 def run():
