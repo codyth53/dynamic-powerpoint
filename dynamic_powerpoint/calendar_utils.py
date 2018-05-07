@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import urllib.request
 import json
 
@@ -36,10 +36,10 @@ class CalendarEvent:
 
 class Calendar:
     def __init__(self, config):
-        now = datetime.utcnow().isoformat() + 'Z'
+        now = (config.get_date() - timedelta(days=1)).isoformat() + 'Z'
         print(now)
 
-        url = "https://www.googleapis.com/calendar/v3/calendars/{0}/events?maxResults=20&singleEvents=true&timeMin={1}&key={2}"
+        url = "https://www.googleapis.com/calendar/v3/calendars/{0}/events?maxResults=40&singleEvents=true&timeMin={1}&key={2}"
         url = url.format(config.get_calendar_id(), now, config.get_key())
 
         print("requesting {0}".format(url))
@@ -60,3 +60,12 @@ class Calendar:
 
         for event in self.events:
             print(event)
+
+    def get_events(self, start=None, end=None):
+        events = [x for x in self.events if
+                  (start is None or start is not None and x.start > start) or
+                  (end is None or end is not None and x.end < end)]
+
+        events.sort(key=lambda event: event.start)
+
+        return events
