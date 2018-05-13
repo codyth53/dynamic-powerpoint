@@ -6,7 +6,7 @@ from pptx import Presentation
 def generate_powerpoint(pg: PowerpointGenerator):
     pptx = Presentation(pg.config.get_template_path())
 
-    two_week_slide = pptx.slides[2]
-    generate_two_week(pg, two_week_slide)
+    #two_week_slide = pptx.slides[2]
+    generate_two_week(pg, pptx.slides)
 
     pptx.save(pg.config.get_save_path())
