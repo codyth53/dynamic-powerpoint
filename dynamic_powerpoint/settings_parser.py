@@ -20,6 +20,19 @@ class ConfigCategory:
             self.transparency = None
 
 
+class EightWeekConfig:
+    def __init__(self, dict):
+        if 'month-one-color' in dict:
+            self.month_one_color = dict['month-one-color']
+        else:
+            self.month_one_color = "FFFFFF"
+
+        if 'month-two-color' in dict:
+            self.month_two_color = dict['month-two-color']
+        else:
+            self.month_two_color = "FFFFFF"
+
+
 class DpConfig:
     def __init__(self, filepath, date):
         try:
@@ -44,6 +57,9 @@ class DpConfig:
         self.categories = {}
         category_input = config['categories'] if 'categories' in config else []
         self._process_categories(category_input)
+
+        eight_week_config = config['eight-week'] if 'eight-week' in config else {}
+        self.eight_week = EightWeekConfig(eight_week_config)
 
     def _process_categories(self, category_input):
         for category in category_input:
