@@ -4,11 +4,13 @@ import json
 
 
 class CalendarEvent:
-    def __init__(self, name, start, end, description, location, repeat_tag):
+    def __init__(self, name, start, end, description, location, repeat_tag, config):
         self.name = name
         self.description = description
         self.location = location
         self.repeat_tag = repeat_tag
+        self.hidden = False
+        self.category = None
 
         if 'date' in start:
             self.start = datetime.strptime(start['date'], '%Y-%m-%d')
@@ -25,6 +27,22 @@ class CalendarEvent:
             self.end = datetime.strptime(val, '%Y-%m-%dT%H:%M:%S')
         else:
             self.end = None
+
+        self._process_description(description, config)
+
+    def _process_description(self, description, config):
+        lines = description.split('\n')
+
+        for line in lines:
+            if line.lower() == 'hidden':
+                self.hidden = True
+            if ':' in line:
+                words = line.split(':')
+                category_word = words[0]
+                category = config.get_category(category_word)
+                if category is not None:
+                    self.category = category
+                    break
 
     def __str__(self):
         return "{0} - {1} to {2}: {3}".format(self.name, self.start, self.end, self.repeat_tag)
@@ -57,7 +75,7 @@ class Calendar:
             description = item.get('description', '')
             location = item.get('location')
             repeat = item.get('recurringEventId')
-            self.events.append(CalendarEvent(name, start, end, description, location, repeat))
+            self.events.append(CalendarEvent(name, start, end, description, location, repeat, config))
 
         for event in self.events:
             print(event)
