@@ -4,7 +4,7 @@ from .powerpoint_generator import PowerpointGenerator
 from ..calendar_utils import CalendarEvent
 from datetime import datetime, timedelta
 from typing import List
-from .util import _hide_slide, _find_slide_with_name, _find_name_in_iterable, _find_sunday
+from .util import _hide_slide, _find_slide_with_name, _find_name_in_iterable, _find_sunday, _remove_element
 import logging
 from pptx.dml.color import RGBColor
 
@@ -79,12 +79,10 @@ def generate_event_markers(group: GroupShapes, events: List[CalendarEvent], star
             logger.info('Day {0} has {1} events'.format(this_day, len(this_day_events)))
         if len(this_day_events) < 2:
             second_marker = _find_name_in_iterable(event_group.shapes, 'event2')
-            ele = second_marker.element
-            ele.getparent().remove(ele)
+            _remove_element(second_marker)
         if len(this_day_events) < 1:
             first_marker = _find_name_in_iterable(event_group.shapes, 'event1')
-            ele = first_marker.element
-            ele.getparent().remove(ele)
+            _remove_element(first_marker)
 
 
 def generate_event_detail_boxes(group: GroupShapes, events: List[CalendarEvent]):
@@ -103,8 +101,7 @@ def generate_event_detail_boxes(group: GroupShapes, events: List[CalendarEvent])
                 if category.transparency is not None:
                     fill.transparency = category.transparency
         else:
-            ele = event_block.element
-            ele.getparent().remove(ele)
+            _remove_element(event_block)
 
 
 def create_array_of_unique_events(events: List[CalendarEvent]) -> List[CalendarEvent]:

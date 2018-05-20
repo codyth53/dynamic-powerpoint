@@ -27,3 +27,8 @@ def _find_name_in_iterable(iterable, name):
         return None
     else:
         return target[0]
+
+
+def _remove_element(element):
+    ele = element.element
+    ele.getparent().remove(ele)
