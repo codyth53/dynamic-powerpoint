@@ -1,11 +1,12 @@
 from pptx.slide import Slide, Slides
-from pptx.shapes.shapetree import GroupShapes, Shape
+from pptx.shapes.shapetree import GroupShapes, Shape, GroupShape
 from .powerpoint_generator import PowerpointGenerator
 from ..calendar_utils import CalendarEvent
 from datetime import datetime, timedelta
 from typing import List
 from .util import _hide_slide, _find_slide_with_name, _find_name_in_iterable, _find_sunday
 import logging
+from pptx.dml.color import RGBColor
 
 
 logger = logging.getLogger('dynamic_powerpoint.powerpoint_generator.two_week_generator')
@@ -88,11 +89,19 @@ def generate_event_markers(group: GroupShapes, events: List[CalendarEvent], star
 
 def generate_event_detail_boxes(group: GroupShapes, events: List[CalendarEvent]):
     for i in range(0, 3):
-        event_block = _find_name_in_iterable(group, 'event-' + str(i+1))
+        event_block: GroupShape = _find_name_in_iterable(group, 'event-' + str(i+1))
         if len(events) > i:
             # handle block color
             textbox = _find_name_in_iterable(event_block.shapes, 'text')
             textbox.text = events[i].name
+
+            if events[i].category is not None:
+                event_shape: Shape = _find_name_in_iterable(event_block.shapes, 'shape')
+                category = events[i].category
+                fill = event_shape.fill
+                fill.fore_color.rgb = RGBColor.from_string(category.color)
+                if category.transparency is not None:
+                    fill.transparency = category.transparency
         else:
             ele = event_block.element
             ele.getparent().remove(ele)

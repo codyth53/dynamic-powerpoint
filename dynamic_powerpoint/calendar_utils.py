@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import urllib.request
 import json
 import logging
+from .settings_parser import ConfigCategory
 
 logger = logging.getLogger('dynamic_powerpoint.calendar_utils')
 
@@ -12,7 +13,7 @@ class CalendarEvent:
         self.location = location
         self.repeat_tag = repeat_tag
         self.hidden = False
-        self.category = None
+        self.category: ConfigCategory = None
 
         if 'date' in start:
             self.start = datetime.strptime(start['date'], '%Y-%m-%d')

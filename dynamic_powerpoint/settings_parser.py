@@ -14,6 +14,11 @@ class ConfigCategory:
         except:
             self.hidden = False
 
+        try:
+            self.transparency = float(dict['transparency'])
+        except:
+            self.transparency = None
+
 
 class DpConfig:
     def __init__(self, filepath, date):
