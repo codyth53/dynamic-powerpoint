@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
 import urllib.request
 import json
+import logging
 
+logger = logging.getLogger('dynamic_powerpoint.calendar_utils')
 
 class CalendarEvent:
     def __init__(self, name, start, end, description, location, repeat_tag, config):
@@ -56,12 +58,12 @@ class Calendar:
     def __init__(self, config):
         now = (config.get_date() - timedelta(days=1)).isoformat() + 'Z'
         eight_weeks_later = (config.get_date() + timedelta(days=56)).isoformat() + 'Z'
-        print(now)
+        logger.debug(now)
 
         url = "https://www.googleapis.com/calendar/v3/calendars/{0}/events?maxResults=100&singleEvents=true&timeMin={1}&timeMax={2}&key={3}"
         url = url.format(config.get_calendar_id(), now, eight_weeks_later, config.get_key())
 
-        print("requesting {0}".format(url))
+        logger.info('Requesting {0}'.format(url))
         get_result = urllib.request.urlopen(url)
 
         events = json.loads(get_result.read().decode('utf-8'))
@@ -77,8 +79,9 @@ class Calendar:
             repeat = item.get('recurringEventId')
             self.events.append(CalendarEvent(name, start, end, description, location, repeat, config))
 
+        logger.info('Found {0} events'.format(len(self.events)))
         for event in self.events:
-            print(event)
+            logger.debug('  {0}'.format(event))
 
     def get_events(self, start=None, end=None):
         events = [x for x in self.events if

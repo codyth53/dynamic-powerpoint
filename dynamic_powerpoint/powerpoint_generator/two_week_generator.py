@@ -5,6 +5,10 @@ from ..calendar_utils import CalendarEvent
 from datetime import datetime, timedelta
 from typing import List
 from .util import _hide_slide, _find_slide_with_name, _find_name_in_iterable, _find_sunday
+import logging
+
+
+logger = logging.getLogger('dynamic_powerpoint.powerpoint_generator.two_week_generator')
 
 
 def generate_two_week(pg: PowerpointGenerator, slides: Slides):
@@ -23,11 +27,11 @@ def generate_two_week(pg: PowerpointGenerator, slides: Slides):
             groups_of_three.append(unique_events)
             unique_events = []
 
-    print("Found the following events:")
+    logger.info('Found the following events:')
     for group in groups_of_three:
-        print("Group:")
+        logger.info('  Group:')
         for event in group:
-            print(str(event))
+            logger.info('    {0}'.format(str(event)))
 
     for i in range(1, 4):
         slide = _find_slide_with_name(slides, "two-week-" + str(i))
@@ -68,7 +72,10 @@ def generate_event_markers(group: GroupShapes, events: List[CalendarEvent], star
         num = int(event_group.name[5:])
         this_day = start_date + timedelta(days=(num-1))
         this_day_events = [x for x in events if x.start >= this_day and x.end <= this_day + timedelta(days=1)]
-        print("Day {0} has {1} events".format(this_day, len(this_day_events)))
+        if len(this_day_events) == 0:
+            logger.debug('Day {0} has {0} events'.format(this_day, len(this_day_events)))
+        else:
+            logger.info('Day {0} has {1} events'.format(this_day, len(this_day_events)))
         if len(this_day_events) < 2:
             second_marker = _find_name_in_iterable(event_group.shapes, 'event2')
             ele = second_marker.element
