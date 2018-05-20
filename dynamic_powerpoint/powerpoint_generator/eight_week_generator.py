@@ -1,10 +1,8 @@
 from pptx.slide import Slides, Slide
 from .powerpoint_generator import PowerpointGenerator
 from .util import _find_sunday, _find_slide_with_name, _find_name_in_iterable
-from pptx.shapes.shapetree import GroupShapes
+from pptx.shapes.shapetree import GroupShapes, Shape
 from datetime import datetime, timedelta
-from pptx.util import Pt
-from pptx.dml.color import RGBColor
 
 
 def generate_eight_week(pg: PowerpointGenerator, slides: Slides):
@@ -19,7 +17,5 @@ def generate_eight_week(pg: PowerpointGenerator, slides: Slides):
 
 def process_week(group: GroupShapes, start_date: datetime):
     for i in range(0, 7):
-        day_block = _find_name_in_iterable(group, 'day' + str(i+1))
-        day_block.text = str((start_date + timedelta(days=i)).day)
-        day_block.text_frame.paragraphs[0].font.size = Pt(28)
-        day_block.text_frame.paragraphs[0].font.color.rgb = RGBColor.from_string('000000')
+        day_block: Shape = _find_name_in_iterable(group, 'day' + str(i+1))
+        day_block.text_frame.paragraphs[0].runs[0].text = str((start_date + timedelta(days=i)).day)

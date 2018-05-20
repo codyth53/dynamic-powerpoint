@@ -1,7 +1,5 @@
 from pptx.slide import Slide, Slides
-from pptx.shapes.shapetree import GroupShapes
-from pptx.util import Pt
-from pptx.dml.color import RGBColor
+from pptx.shapes.shapetree import GroupShapes, Shape
 from .powerpoint_generator import PowerpointGenerator
 from ..calendar_utils import CalendarEvent
 from datetime import datetime, timedelta
@@ -56,13 +54,12 @@ def generate_two_week_slide(slide: Slide,
 
 def generate_calendar_dates(group: GroupShapes, start_date: datetime):
     date = start_date
+    textbox: Shape = None
     for textbox in group:
         # assuming textboxes with name 'dayX'
         num = int(textbox.name[3:])
         this_day = date + timedelta(days=(num-1))
-        textbox.text = str(this_day.day)
-        textbox.text_frame.paragraphs[0].font.size = Pt(28)
-        textbox.text_frame.paragraphs[0].font.color.rgb = RGBColor.from_string('000000')
+        textbox.text_frame.paragraphs[0].runs[0].text = str(this_day.day)
 
 
 def generate_event_markers(group: GroupShapes, events: List[CalendarEvent], start_date: datetime):
